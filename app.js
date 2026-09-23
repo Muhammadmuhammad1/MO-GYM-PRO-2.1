@@ -1,12 +1,15 @@
 /* =====================================================
    MO GYM PRO 2.0
-   Workout Engine - Version 1
+   Workout Engine + Character System
 ===================================================== */
 
 
-/* ================= DATA ================= */
+/* =====================================================
+   DEFAULT DATA
+===================================================== */
 
 const defaultData = {
+
   profile: null,
 
   weightHistory: [],
@@ -17,67 +20,199 @@ const defaultData = {
 
   level: 1,
 
+  stats: {
+    STR: 1,
+    END: 1,
+    POW: 1,
+    REC: 1,
+    CON: 1
+  },
+
   streak: {
+
     current: 0,
+
     longest: 0,
+
     lastWorkoutDate: null
+
   },
 
   settings: {
+
     darkMode: false,
+
     restTimer: true,
+
     language: "ar"
+
   }
+
 };
 
 
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
 let appData =
-  JSON.parse(localStorage.getItem("moGymProData")) ||
+  JSON.parse(
+    localStorage.getItem("moGymProData")
+  ) ||
   structuredClone(defaultData);
 
 
-/* ================= SAVE ================= */
+/* =====================================================
+   DATA MIGRATION
+===================================================== */
+
+function migrateData() {
+
+  if (!appData.stats) {
+
+    appData.stats = {
+      STR: 1,
+      END: 1,
+      POW: 1,
+      REC: 1,
+      CON: 1
+    };
+
+  }
+
+  appData.stats.STR =
+    Number(appData.stats.STR) || 1;
+
+  appData.stats.END =
+    Number(appData.stats.END) || 1;
+
+  appData.stats.POW =
+    Number(appData.stats.POW) || 1;
+
+  appData.stats.REC =
+    Number(appData.stats.REC) || 1;
+
+  appData.stats.CON =
+    Number(appData.stats.CON) || 1;
+
+
+  if (!appData.streak) {
+
+    appData.streak = {
+      current: 0,
+      longest: 0,
+      lastWorkoutDate: null
+    };
+
+  }
+
+
+  if (!appData.weightHistory) {
+    appData.weightHistory = [];
+  }
+
+
+  if (!appData.workouts) {
+    appData.workouts = [];
+  }
+
+
+  if (typeof appData.xp !== "number") {
+    appData.xp = Number(appData.xp) || 0;
+  }
+
+
+  if (!appData.level) {
+    appData.level = 1;
+  }
+
+
+  if (!appData.settings) {
+
+    appData.settings = {
+      darkMode: false,
+      restTimer: true,
+      language: "ar"
+    };
+
+  }
+
+}
+
+
+migrateData();
+
+
+/* =====================================================
+   SAVE
+===================================================== */
 
 function saveData() {
+
   localStorage.setItem(
     "moGymProData",
     JSON.stringify(appData)
   );
+
 }
 
 
-/* ================= INIT ================= */
+/* =====================================================
+   INIT
+===================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
 
-  if (appData.profile) {
-    showApp();
-  } else {
-    showOnboarding();
+    if (appData.profile) {
+
+      showApp();
+
+    } else {
+
+      showOnboarding();
+
+    }
+
+
+    setupOnboarding();
+
+    renderWorkoutSystems();
+
+    updateHome();
+
+    updateProfile();
+
+    renderWeightHistory();
+
+
+    if (
+      appData.settings.darkMode
+    ) {
+
+      document.body.classList.add(
+        "dark"
+      );
+
+    }
+
   }
-
-  setupOnboarding();
-
-  renderWorkoutSystems();
-  updateHome();
-  updateProfile();
-  renderWeightHistory();
-
-  if (appData.settings.darkMode) {
-    document.body.classList.add("dark");
-  }
-
-});
+);
 
 
-/* ================= ONBOARDING ================= */
+/* =====================================================
+   ONBOARDING
+===================================================== */
 
 function showOnboarding() {
 
-  document.getElementById("onboarding")
+  document
+    .getElementById("onboarding")
     .classList.remove("hidden");
 
-  document.getElementById("app")
+  document
+    .getElementById("app")
     .classList.add("hidden");
 
 }
@@ -85,10 +220,12 @@ function showOnboarding() {
 
 function showApp() {
 
-  document.getElementById("onboarding")
+  document
+    .getElementById("onboarding")
     .classList.add("hidden");
 
-  document.getElementById("app")
+  document
+    .getElementById("app")
     .classList.remove("hidden");
 
 }
@@ -97,212 +234,880 @@ function showApp() {
 function setupOnboarding() {
 
   const form =
-    document.getElementById("onboardingForm");
-
-  form.addEventListener("submit", function(e) {
-
-    e.preventDefault();
-
-    const gender =
-      document.querySelector(
-        'input[name="gender"]:checked'
-      ).value;
-
-    appData.profile = {
-
-      name:
-        document.getElementById("nameInput").value.trim(),
-
-      age:
-        Number(document.getElementById("ageInput").value),
-
-      gender,
-
-      height:
-        Number(document.getElementById("heightInput").value),
-
-      weight:
-        Number(document.getElementById("weightInput").value),
-
-      goal:
-        document.getElementById("goalInput").value,
-
-      activity:
-        document.getElementById("activityInput").value,
-
-      workoutDays:
-        Number(document.getElementById("daysInput").value),
-
-      lastWeightUpdate:
-        getToday()
-
-    };
+    document.getElementById(
+      "onboardingForm"
+    );
 
 
-    appData.weightHistory = [
-
-      {
-        date: getToday(),
-        weight: appData.profile.weight
-      }
-
-    ];
+  if (!form) return;
 
 
-    saveData();
+  form.addEventListener(
+    "submit",
+    function(e) {
 
-    showApp();
+      e.preventDefault();
 
-    updateHome();
 
-    updateProfile();
+      const gender =
+        document.querySelector(
+          'input[name="gender"]:checked'
+        ).value;
 
-    renderWeightHistory();
 
-  });
+      appData.profile = {
+
+        name:
+          document
+            .getElementById(
+              "nameInput"
+            )
+            .value
+            .trim(),
+
+        age:
+          Number(
+            document
+              .getElementById(
+                "ageInput"
+              )
+              .value
+          ),
+
+        gender,
+
+        height:
+          Number(
+            document
+              .getElementById(
+                "heightInput"
+              )
+              .value
+          ),
+
+        weight:
+          Number(
+            document
+              .getElementById(
+                "weightInput"
+              )
+              .value
+          ),
+
+        goal:
+          document.getElementById(
+            "goalInput"
+          ).value,
+
+        activity:
+          document.getElementById(
+            "activityInput"
+          ).value,
+
+        workoutDays:
+          Number(
+            document.getElementById(
+              "daysInput"
+            ).value
+          ),
+
+        lastWeightUpdate:
+          getToday()
+
+      };
+
+
+      appData.weightHistory = [
+
+        {
+          date: getToday(),
+          weight:
+            appData.profile.weight
+        }
+
+      ];
+
+
+      appData.stats = {
+
+        STR: 1,
+
+        END: 1,
+
+        POW: 1,
+
+        REC: 1,
+
+        CON: 1
+
+      };
+
+
+      appData.xp = 0;
+
+      appData.level = 1;
+
+
+      saveData();
+
+      showApp();
+
+      updateHome();
+
+      updateProfile();
+
+      renderWeightHistory();
+
+    }
+
+  );
 
 }
 
 
-/* ================= NAVIGATION ================= */
+/* =====================================================
+   NAVIGATION
+===================================================== */
 
 function showPage(pageId) {
 
-  document.querySelectorAll(".page")
+  document
+    .querySelectorAll(".page")
     .forEach(page => {
 
-      page.classList.remove("active");
+      page.classList.remove(
+        "active"
+      );
 
     });
 
+
   const page =
-    document.getElementById(pageId);
+    document.getElementById(
+      pageId
+    );
+
 
   if (page) {
-    page.classList.add("active");
+
+    page.classList.add(
+      "active"
+    );
+
   }
 
+
   window.scrollTo({
+
     top: 0,
+
     behavior: "smooth"
+
   });
 
 }
 
 
-/* ================= HOME ================= */
+/* =====================================================
+   HOME
+===================================================== */
 
 function updateHome() {
 
   if (!appData.profile) return;
 
-  document.getElementById("homeGreeting")
+
+  document
+    .getElementById(
+      "homeGreeting"
+    )
     .textContent =
       `أهلاً ${appData.profile.name} 👋`;
 
-  document.getElementById("homeWeight")
+
+  document
+    .getElementById(
+      "homeWeight"
+    )
     .textContent =
       `${appData.profile.weight} kg`;
 
-  document.getElementById("homeHeight")
+
+  document
+    .getElementById(
+      "homeHeight"
+    )
     .textContent =
       `${appData.profile.height} cm`;
 
-  document.getElementById("homeWorkouts")
+
+  document
+    .getElementById(
+      "homeWorkouts"
+    )
     .textContent =
       appData.workouts.length;
 
-  document.getElementById("homeStreak")
+
+  document
+    .getElementById(
+      "homeStreak"
+    )
     .textContent =
       appData.streak.current;
 
+
   updateXP();
+
+  updateCharacterStats();
+
+  updateAvatar();
+
+  updateProgressMessage();
 
 }
 
 
-/* ================= XP ================= */
+/* =====================================================
+   XP / LEVEL
+===================================================== */
 
 function updateXP() {
 
-  const xp = appData.xp;
+  const xp =
+    Math.max(
+      0,
+      Number(appData.xp) || 0
+    );
+
 
   const xpPerLevel = 100;
 
+
   const level =
-    Math.floor(xp / xpPerLevel) + 1;
+    Math.floor(
+      xp / xpPerLevel
+    ) + 1;
+
 
   appData.level = level;
+
 
   const currentLevelXP =
     xp % xpPerLevel;
 
-  document.getElementById("levelValue")
-    .textContent = level;
 
-  document.getElementById("xpValue")
-    .textContent = currentLevelXP;
+  const progress =
+    currentLevelXP;
 
-  document.getElementById("xpProgress")
-    .style.width =
-      `${currentLevelXP}%`;
+
+  const remaining =
+    xpPerLevel -
+    currentLevelXP;
+
+
+  const levelValue =
+    document.getElementById(
+      "levelValue"
+    );
+
+  const levelTitleValue =
+    document.getElementById(
+      "levelTitleValue"
+    );
+
+  const statsLevelValue =
+    document.getElementById(
+      "statsLevelValue"
+    );
+
+  const xpValue =
+    document.getElementById(
+      "xpValue"
+    );
+
+  const xpProgress =
+    document.getElementById(
+      "xpProgress"
+    );
+
+  const xpNextValue =
+    document.getElementById(
+      "xpNextValue"
+    );
+
+  const xpRemainingValue =
+    document.getElementById(
+      "xpRemainingValue"
+    );
+
+
+  if (levelValue) {
+
+    levelValue.textContent =
+      level;
+
+  }
+
+
+  if (levelTitleValue) {
+
+    levelTitleValue.textContent =
+      level;
+
+  }
+
+
+  if (statsLevelValue) {
+
+    statsLevelValue.textContent =
+      level;
+
+  }
+
+
+  if (xpValue) {
+
+    xpValue.textContent =
+      currentLevelXP;
+
+  }
+
+
+  if (xpNextValue) {
+
+    xpNextValue.textContent =
+      xpPerLevel;
+
+  }
+
+
+  if (xpRemainingValue) {
+
+    xpRemainingValue.textContent =
+      remaining;
+
+  }
+
+
+  if (xpProgress) {
+
+    xpProgress.style.width =
+      `${progress}%`;
+
+  }
 
 }
 
 
-/* ================= PROFILE ================= */
+/* =====================================================
+   CHARACTER STATS
+===================================================== */
+
+function updateCharacterStats() {
+
+  const stats =
+    appData.stats;
+
+
+  const elements = {
+
+    STR: [
+      "strValue",
+      "strProgress"
+    ],
+
+    END: [
+      "endValue",
+      "endProgress"
+    ],
+
+    POW: [
+      "powValue",
+      "powProgress"
+    ],
+
+    REC: [
+      "recValue",
+      "recProgress"
+    ],
+
+    CON: [
+      "conValue",
+      "conProgress"
+    ]
+
+  };
+
+
+  Object.entries(elements)
+    .forEach(
+      ([stat, ids]) => {
+
+        const value =
+          Math.min(
+            100,
+            Math.max(
+              1,
+              Math.round(
+                stats[stat]
+              )
+            )
+          );
+
+
+        const valueElement =
+          document.getElementById(
+            ids[0]
+          );
+
+        const progressElement =
+          document.getElementById(
+            ids[1]
+          );
+
+
+        if (valueElement) {
+
+          valueElement.textContent =
+            value;
+
+        }
+
+
+        if (progressElement) {
+
+          progressElement.style.width =
+            `${value}%`;
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =====================================================
+   CHARACTER STAT PROGRESSION
+===================================================== */
+
+function increaseStat(
+  stat,
+  amount
+) {
+
+  if (
+    !appData.stats ||
+    !appData.stats[stat]
+  ) {
+
+    return;
+
+  }
+
+
+  appData.stats[stat] =
+    Math.min(
+      100,
+      appData.stats[stat] +
+      amount
+    );
+
+}
+
+
+/* =====================================================
+   CALCULATE WORKOUT STATS
+===================================================== */
+
+function calculateWorkoutStats(
+  exercises
+) {
+
+  let completedSets = 0;
+
+  let totalVolume = 0;
+
+  let heavySets = 0;
+
+
+  exercises.forEach(
+    exercise => {
+
+      exercise.sets.forEach(
+        set => {
+
+          if (!set.completed) {
+            return;
+          }
+
+
+          completedSets++;
+
+
+          const weight =
+            Number(set.weight) || 0;
+
+          const reps =
+            Number(set.reps) || 0;
+
+
+          totalVolume +=
+            weight * reps;
+
+
+          if (
+            weight >= 50 ||
+            reps <= 6
+          ) {
+
+            heavySets++;
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  return {
+    completedSets,
+    totalVolume,
+    heavySets
+  };
+
+}
+
+
+/* =====================================================
+   APPLY WORKOUT STATS
+===================================================== */
+
+function applyWorkoutStats(
+  workoutStats
+) {
+
+  const {
+    completedSets,
+    totalVolume,
+    heavySets
+  } = workoutStats;
+
+
+  if (completedSets <= 0) {
+
+    return;
+
+  }
+
+
+  /*
+     STR:
+     القوة تزيد مع المجموعات الثقيلة.
+  */
+
+  increaseStat(
+    "STR",
+    Math.max(
+      1,
+      Math.min(
+        4,
+        Math.floor(
+          heavySets / 2
+        ) + 1
+      )
+    )
+  );
+
+
+  /*
+     END:
+     عدد المجموعات المكتملة.
+  */
+
+  increaseStat(
+    "END",
+    Math.max(
+      1,
+      Math.min(
+        4,
+        Math.floor(
+          completedSets / 5
+        ) + 1
+      )
+    )
+  );
+
+
+  /*
+     POW:
+     يعتمد على حجم العمل.
+  */
+
+  const powerGain =
+    Math.max(
+      1,
+      Math.min(
+        4,
+        Math.floor(
+          totalVolume / 1000
+        ) + 1
+      )
+    );
+
+
+  increaseStat(
+    "POW",
+    powerGain
+  );
+
+
+  /*
+     REC:
+     التزام بالتعافي بين الحصص.
+     كل تمرين مكتمل يعطي نقطة
+     recovery discipline.
+  */
+
+  increaseStat(
+    "REC",
+    1
+  );
+
+
+  /*
+     CON:
+     الاستمرارية + الـ streak.
+  */
+
+  const consistencyGain =
+    Math.max(
+      1,
+      Math.min(
+        4,
+        appData.streak.current
+      )
+    );
+
+
+  increaseStat(
+    "CON",
+    consistencyGain
+  );
+
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+function updateAvatar() {
+
+  const avatar =
+    document.getElementById(
+      "avatar"
+    );
+
+
+  if (!avatar) return;
+
+
+  const level =
+    Number(appData.level) || 1;
+
+
+  const stats =
+    appData.stats;
+
+
+  /*
+     الحجم الأساسي يتطور مع الـ Level.
+  */
+
+  const scale =
+    Math.min(
+      1.16,
+      0.88 +
+      (level * 0.012)
+    );
+
+
+  /*
+     العضلات تتأثر بالقوة والـ Power.
+  */
+
+  const muscle =
+    Math.min(
+      1.32,
+      0.88 +
+      (
+        (
+          stats.STR +
+          stats.POW
+        ) / 200
+      )
+    );
+
+
+  avatar.style.setProperty(
+    "--avatar-scale",
+    scale
+  );
+
+
+  avatar.style.setProperty(
+    "--muscle",
+    muscle
+  );
+
+}
+
+
+/* =====================================================
+   HOME PROGRESS MESSAGE
+===================================================== */
+
+function updateProgressMessage() {
+
+  const element =
+    document.getElementById(
+      "progressMessage"
+    );
+
+
+  if (!element) return;
+
+
+  const workouts =
+    appData.workouts.length;
+
+
+  if (!workouts) {
+
+    element.textContent =
+      "ابدأ أول تمرين ليظهر تقدمك هنا 💪";
+
+    return;
+
+  }
+
+
+  const stats =
+    appData.stats;
+
+
+  element.textContent =
+    `عملت ${workouts} تمرين • ` +
+    `STR ${stats.STR} • ` +
+    `CON ${stats.CON} • ` +
+    `Streak ${appData.streak.current} 🔥`;
+
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
 
 function updateProfile() {
 
   if (!appData.profile) return;
 
-  const p = appData.profile;
 
-  document.getElementById("profileName")
-    .textContent = p.name;
+  const p =
+    appData.profile;
 
-  document.getElementById("profileAge")
-    .textContent = p.age;
 
-  document.getElementById("profileGender")
+  document
+    .getElementById(
+      "profileName"
+    )
+    .textContent =
+      p.name;
+
+
+  document
+    .getElementById(
+      "profileAge"
+    )
+    .textContent =
+      p.age;
+
+
+  document
+    .getElementById(
+      "profileGender"
+    )
     .textContent =
       p.gender === "male"
         ? "ذكر"
         : "أنثى";
 
-  document.getElementById("profileHeight")
+
+  document
+    .getElementById(
+      "profileHeight"
+    )
     .textContent =
       `${p.height} cm`;
 
-  document.getElementById("profileWeight")
+
+  document
+    .getElementById(
+      "profileWeight"
+    )
     .textContent =
       `${p.weight} kg`;
 
+
   const goals = {
 
-    gain: "زيادة الوزن والعضلات",
+    gain:
+      "زيادة الوزن والعضلات",
 
-    maintain: "المحافظة على الوزن",
+    maintain:
+      "المحافظة على الوزن",
 
-    lose: "خسارة الدهون والوزن"
+    lose:
+      "خسارة الدهون والوزن"
 
   };
 
-  document.getElementById("profileGoal")
+
+  document
+    .getElementById(
+      "profileGoal"
+    )
     .textContent =
-      goals[p.goal] || p.goal;
+      goals[p.goal] ||
+      p.goal;
 
 }
 
 
-/* ================= WEIGHT ================= */
+/* =====================================================
+   WEIGHT
+===================================================== */
 
 function openWeightUpdate() {
 
-  document.getElementById("weightModal")
-    .classList.remove("hidden");
+  document
+    .getElementById(
+      "weightModal"
+    )
+    .classList.remove(
+      "hidden"
+    );
 
-  document.getElementById("newWeightInput")
+
+  document
+    .getElementById(
+      "newWeightInput"
+    )
     .value =
       appData.profile.weight;
 
@@ -311,8 +1116,13 @@ function openWeightUpdate() {
 
 function closeWeightUpdate() {
 
-  document.getElementById("weightModal")
-    .classList.add("hidden");
+  document
+    .getElementById(
+      "weightModal"
+    )
+    .classList.add(
+      "hidden"
+    );
 
 }
 
@@ -320,14 +1130,23 @@ function closeWeightUpdate() {
 function saveWeightUpdate() {
 
   const input =
-    document.getElementById("newWeightInput");
+    document.getElementById(
+      "newWeightInput"
+    );
+
 
   const newWeight =
     Number(input.value);
 
-  if (!newWeight || newWeight <= 0) {
 
-    alert("دخل وزن صحيح");
+  if (
+    !newWeight ||
+    newWeight <= 0
+  ) {
+
+    alert(
+      "دخل وزن صحيح"
+    );
 
     return;
 
@@ -336,6 +1155,7 @@ function saveWeightUpdate() {
 
   appData.profile.weight =
     newWeight;
+
 
   appData.profile.lastWeightUpdate =
     getToday();
@@ -370,9 +1190,13 @@ function renderWeightHistory() {
       "weightHistoryList"
     );
 
+
   if (!container) return;
 
-  if (!appData.weightHistory.length) {
+
+  if (
+    !appData.weightHistory.length
+  ) {
 
     container.innerHTML =
       "<p>لا يوجد سجل أوزان حتى الآن.</p>";
@@ -383,99 +1207,115 @@ function renderWeightHistory() {
 
 
   const history =
-    [...appData.weightHistory]
-      .reverse();
+    [
+      ...appData.weightHistory
+    ].reverse();
 
 
-  container.innerHTML = "";
+  container.innerHTML =
+    "";
 
 
-  history.forEach((entry, index) => {
+  history.forEach(
+    (entry, index) => {
 
-    const previous =
-      history[index + 1];
+      const previous =
+        history[index + 1];
 
-    let changeText = "";
 
-    if (previous) {
+      let changeText =
+        "";
 
-      const change =
-        entry.weight - previous.weight;
 
-      if (change > 0) {
+      if (previous) {
 
-        changeText =
-          `<span>+${change.toFixed(1)} kg</span>`;
+        const change =
+          entry.weight -
+          previous.weight;
 
-      } else if (change < 0) {
 
-        changeText =
-          `<span>${change.toFixed(1)} kg</span>`;
+        if (change > 0) {
 
-      } else {
+          changeText =
+            `<span>+${change.toFixed(1)} kg</span>`;
 
-        changeText =
-          `<span>0 kg</span>`;
+        }
+
+        else if (change < 0) {
+
+          changeText =
+            `<span>${change.toFixed(1)} kg</span>`;
+
+        }
+
+        else {
+
+          changeText =
+            `<span>0 kg</span>`;
+
+        }
 
       }
 
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.style.padding =
+        "15px 0";
+
+
+      row.style.borderBottom =
+        "1px solid var(--border)";
+
+
+      row.innerHTML = `
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+        ">
+
+          <div>
+
+            <strong>
+              ${entry.weight} kg
+            </strong>
+
+            <small style="
+              display:block;
+              color:var(--muted);
+              margin-top:4px;
+            ">
+              ${entry.date}
+            </small>
+
+          </div>
+
+          <div>
+            ${changeText}
+          </div>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(row);
+
     }
-
-
-    const row =
-      document.createElement("div");
-
-    row.style.padding = "15px 0";
-
-    row.style.borderBottom =
-      "1px solid var(--border)";
-
-    row.innerHTML = `
-
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      ">
-
-        <div>
-
-          <strong>
-            ${entry.weight} kg
-          </strong>
-
-          <small style="
-            display:block;
-            color:var(--muted);
-            margin-top:4px;
-          ">
-            ${entry.date}
-          </small>
-
-        </div>
-
-        <div>
-          ${changeText}
-        </div>
-
-      </div>
-
-    `;
-
-
-    container.appendChild(row);
-
-  });
+  );
 
 }
 
 
 /* =====================================================
-   WORKOUT ENGINE
+   WORKOUT DATA
 ===================================================== */
-
-
-/* ================= WORKOUT DATA ================= */
 
 const workoutSystems = {
 
@@ -485,192 +1325,240 @@ const workoutSystems = {
 
     icon: "🔥",
 
-    description: "Push / Pull / Legs / Upper / Lower",
+    description:
+      "Push / Pull / Legs / Upper / Lower",
 
     days: [
 
       {
         name: "Push",
-        muscles: "Chest • Shoulders • Triceps",
+        muscles:
+          "Chest • Shoulders • Triceps",
+
         exercises: [
 
           {
-            name: "Barbell Bench Press",
+            name:
+              "Barbell Bench Press",
             defaultSets: 3
           },
 
           {
-            name: "Incline Dumbbell Press",
+            name:
+              "Incline Dumbbell Press",
             defaultSets: 3
           },
 
           {
-            name: "Cable Fly",
+            name:
+              "Cable Fly",
             defaultSets: 3
           },
 
           {
-            name: "Dumbbell Shoulder Press",
+            name:
+              "Dumbbell Shoulder Press",
             defaultSets: 3
           },
 
           {
-            name: "Lateral Raise",
+            name:
+              "Lateral Raise",
             defaultSets: 3
           },
 
           {
-            name: "Triceps Pushdown",
+            name:
+              "Triceps Pushdown",
             defaultSets: 3
           }
 
         ]
+
       },
 
 
       {
         name: "Pull",
-        muscles: "Back • Rear Delts • Biceps",
+
+        muscles:
+          "Back • Rear Delts • Biceps",
+
         exercises: [
 
           {
-            name: "Lat Pulldown",
+            name:
+              "Lat Pulldown",
             defaultSets: 3
           },
 
           {
-            name: "Barbell Row",
+            name:
+              "Barbell Row",
             defaultSets: 3
           },
 
           {
-            name: "Seated Cable Row",
+            name:
+              "Seated Cable Row",
             defaultSets: 3
           },
 
           {
-            name: "Face Pull",
+            name:
+              "Face Pull",
             defaultSets: 3
           },
 
           {
-            name: "Dumbbell Curl",
+            name:
+              "Dumbbell Curl",
             defaultSets: 3
           },
 
           {
-            name: "Hammer Curl",
+            name:
+              "Hammer Curl",
             defaultSets: 3
           }
 
         ]
+
       },
 
 
       {
         name: "Legs",
-        muscles: "Quads • Hamstrings • Glutes • Calves",
+
+        muscles:
+          "Quads • Hamstrings • Glutes • Calves",
+
         exercises: [
 
           {
-            name: "Squat",
+            name:
+              "Squat",
             defaultSets: 3
           },
 
           {
-            name: "Leg Press",
+            name:
+              "Leg Press",
             defaultSets: 3
           },
 
           {
-            name: "Leg Curl",
+            name:
+              "Leg Curl",
             defaultSets: 3
           },
 
           {
-            name: "Leg Extension",
+            name:
+              "Leg Extension",
             defaultSets: 3
           },
 
           {
-            name: "Calf Raise",
+            name:
+              "Calf Raise",
             defaultSets: 3
           }
 
         ]
+
       },
 
 
       {
         name: "Upper",
-        muscles: "Upper Body",
+
+        muscles:
+          "Upper Body",
+
         exercises: [
 
           {
-            name: "Bench Press",
+            name:
+              "Bench Press",
             defaultSets: 3
           },
 
           {
-            name: "Lat Pulldown",
+            name:
+              "Lat Pulldown",
             defaultSets: 3
           },
 
           {
-            name: "Shoulder Press",
+            name:
+              "Shoulder Press",
             defaultSets: 3
           },
 
           {
-            name: "Seated Row",
+            name:
+              "Seated Row",
             defaultSets: 3
           },
 
           {
-            name: "Biceps Curl",
+            name:
+              "Biceps Curl",
             defaultSets: 3
           },
 
           {
-            name: "Triceps Pushdown",
+            name:
+              "Triceps Pushdown",
             defaultSets: 3
           }
 
         ]
+
       },
 
 
       {
         name: "Lower",
-        muscles: "Legs",
+
+        muscles:
+          "Legs",
+
         exercises: [
 
           {
-            name: "Squat",
+            name:
+              "Squat",
             defaultSets: 3
           },
 
           {
-            name: "Romanian Deadlift",
+            name:
+              "Romanian Deadlift",
             defaultSets: 3
           },
 
           {
-            name: "Leg Press",
+            name:
+              "Leg Press",
             defaultSets: 3
           },
 
           {
-            name: "Leg Curl",
+            name:
+              "Leg Curl",
             defaultSets: 3
           },
 
           {
-            name: "Calf Raise",
+            name:
+              "Calf Raise",
             defaultSets: 3
           }
 
         ]
+
       }
 
     ]
@@ -684,64 +1572,137 @@ const workoutSystems = {
 
     icon: "💪",
 
-    description: "Push / Pull / Legs",
+    description:
+      "Push / Pull / Legs",
 
     days: [
 
       {
         name: "Push",
-        muscles: "Chest • Shoulders • Triceps",
+
+        muscles:
+          "Chest • Shoulders • Triceps",
+
         exercises: [
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Incline Dumbbell Press", defaultSets: 3 },
+          {
+            name:
+              "Incline Dumbbell Press",
+            defaultSets: 3
+          },
 
-          { name: "Shoulder Press", defaultSets: 3 },
+          {
+            name:
+              "Shoulder Press",
+            defaultSets: 3
+          },
 
-          { name: "Lateral Raise", defaultSets: 3 },
+          {
+            name:
+              "Lateral Raise",
+            defaultSets: 3
+          },
 
-          { name: "Triceps Pushdown", defaultSets: 3 }
+          {
+            name:
+              "Triceps Pushdown",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
         name: "Pull",
-        muscles: "Back • Biceps",
+
+        muscles:
+          "Back • Biceps",
+
         exercises: [
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Barbell Row", defaultSets: 3 },
+          {
+            name:
+              "Barbell Row",
+            defaultSets: 3
+          },
 
-          { name: "Seated Row", defaultSets: 3 },
+          {
+            name:
+              "Seated Row",
+            defaultSets: 3
+          },
 
-          { name: "Dumbbell Curl", defaultSets: 3 },
+          {
+            name:
+              "Dumbbell Curl",
+            defaultSets: 3
+          },
 
-          { name: "Hammer Curl", defaultSets: 3 }
+          {
+            name:
+              "Hammer Curl",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
         name: "Legs",
-        muscles: "Quads • Hamstrings • Glutes",
+
+        muscles:
+          "Quads • Hamstrings • Glutes",
+
         exercises: [
 
-          { name: "Squat", defaultSets: 3 },
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          },
 
-          { name: "Leg Press", defaultSets: 3 },
+          {
+            name:
+              "Leg Press",
+            defaultSets: 3
+          },
 
-          { name: "Romanian Deadlift", defaultSets: 3 },
+          {
+            name:
+              "Romanian Deadlift",
+            defaultSets: 3
+          },
 
-          { name: "Leg Curl", defaultSets: 3 },
+          {
+            name:
+              "Leg Curl",
+            defaultSets: 3
+          },
 
-          { name: "Calf Raise", defaultSets: 3 }
+          {
+            name:
+              "Calf Raise",
+            defaultSets: 3
+          }
 
         ]
+
       }
 
     ]
@@ -755,64 +1716,138 @@ const workoutSystems = {
 
     icon: "🏆",
 
-    description: "Chest/Back • Shoulders/Arms • Legs",
+    description:
+      "Chest/Back • Shoulders/Arms • Legs",
 
     days: [
 
       {
-        name: "Chest + Back",
-        muscles: "Chest • Back",
+        name:
+          "Chest + Back",
+
+        muscles:
+          "Chest • Back",
+
         exercises: [
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Incline Press", defaultSets: 3 },
+          {
+            name:
+              "Incline Press",
+            defaultSets: 3
+          },
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Barbell Row", defaultSets: 3 },
+          {
+            name:
+              "Barbell Row",
+            defaultSets: 3
+          },
 
-          { name: "Cable Fly", defaultSets: 3 }
+          {
+            name:
+              "Cable Fly",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
-        name: "Shoulders + Arms",
-        muscles: "Shoulders • Biceps • Triceps",
+        name:
+          "Shoulders + Arms",
+
+        muscles:
+          "Shoulders • Biceps • Triceps",
+
         exercises: [
 
-          { name: "Shoulder Press", defaultSets: 3 },
+          {
+            name:
+              "Shoulder Press",
+            defaultSets: 3
+          },
 
-          { name: "Lateral Raise", defaultSets: 3 },
+          {
+            name:
+              "Lateral Raise",
+            defaultSets: 3
+          },
 
-          { name: "Biceps Curl", defaultSets: 3 },
+          {
+            name:
+              "Biceps Curl",
+            defaultSets: 3
+          },
 
-          { name: "Hammer Curl", defaultSets: 3 },
+          {
+            name:
+              "Hammer Curl",
+            defaultSets: 3
+          },
 
-          { name: "Triceps Pushdown", defaultSets: 3 }
+          {
+            name:
+              "Triceps Pushdown",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
         name: "Legs",
+
         muscles: "Legs",
+
         exercises: [
 
-          { name: "Squat", defaultSets: 3 },
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          },
 
-          { name: "Leg Press", defaultSets: 3 },
+          {
+            name:
+              "Leg Press",
+            defaultSets: 3
+          },
 
-          { name: "Romanian Deadlift", defaultSets: 3 },
+          {
+            name:
+              "Romanian Deadlift",
+            defaultSets: 3
+          },
 
-          { name: "Leg Curl", defaultSets: 3 },
+          {
+            name:
+              "Leg Curl",
+            defaultSets: 3
+          },
 
-          { name: "Calf Raise", defaultSets: 3 }
+          {
+            name:
+              "Calf Raise",
+            defaultSets: 3
+          }
 
         ]
+
       }
 
     ]
@@ -822,49 +1857,99 @@ const workoutSystems = {
 
   TORSO_LIMBS: {
 
-    name: "Torso / Limbs",
+    name:
+      "Torso / Limbs",
 
     icon: "⚡",
 
-    description: "Torso / Arms & Legs",
+    description:
+      "Torso / Arms & Legs",
 
     days: [
 
       {
         name: "Torso",
-        muscles: "Chest • Back • Shoulders",
+
+        muscles:
+          "Chest • Back • Shoulders",
+
         exercises: [
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Seated Row", defaultSets: 3 },
+          {
+            name:
+              "Seated Row",
+            defaultSets: 3
+          },
 
-          { name: "Shoulder Press", defaultSets: 3 },
+          {
+            name:
+              "Shoulder Press",
+            defaultSets: 3
+          },
 
-          { name: "Lateral Raise", defaultSets: 3 }
+          {
+            name:
+              "Lateral Raise",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
         name: "Limbs",
-        muscles: "Arms • Legs",
+
+        muscles:
+          "Arms • Legs",
+
         exercises: [
 
-          { name: "Squat", defaultSets: 3 },
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          },
 
-          { name: "Leg Curl", defaultSets: 3 },
+          {
+            name:
+              "Leg Curl",
+            defaultSets: 3
+          },
 
-          { name: "Biceps Curl", defaultSets: 3 },
+          {
+            name:
+              "Biceps Curl",
+            defaultSets: 3
+          },
 
-          { name: "Hammer Curl", defaultSets: 3 },
+          {
+            name:
+              "Hammer Curl",
+            defaultSets: 3
+          },
 
-          { name: "Triceps Pushdown", defaultSets: 3 }
+          {
+            name:
+              "Triceps Pushdown",
+            defaultSets: 3
+          }
 
         ]
+
       }
 
     ]
@@ -874,51 +1959,104 @@ const workoutSystems = {
 
   UPPER_LOWER: {
 
-    name: "Upper / Lower",
+    name:
+      "Upper / Lower",
 
     icon: "🔄",
 
-    description: "Upper Body / Lower Body",
+    description:
+      "Upper Body / Lower Body",
 
     days: [
 
       {
         name: "Upper",
-        muscles: "Chest • Back • Shoulders • Arms",
+
+        muscles:
+          "Chest • Back • Shoulders • Arms",
+
         exercises: [
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Shoulder Press", defaultSets: 3 },
+          {
+            name:
+              "Shoulder Press",
+            defaultSets: 3
+          },
 
-          { name: "Seated Row", defaultSets: 3 },
+          {
+            name:
+              "Seated Row",
+            defaultSets: 3
+          },
 
-          { name: "Biceps Curl", defaultSets: 3 },
+          {
+            name:
+              "Biceps Curl",
+            defaultSets: 3
+          },
 
-          { name: "Triceps Pushdown", defaultSets: 3 }
+          {
+            name:
+              "Triceps Pushdown",
+            defaultSets: 3
+          }
 
         ]
+
       },
 
 
       {
         name: "Lower",
+
         muscles: "Legs",
+
         exercises: [
 
-          { name: "Squat", defaultSets: 3 },
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          },
 
-          { name: "Romanian Deadlift", defaultSets: 3 },
+          {
+            name:
+              "Romanian Deadlift",
+            defaultSets: 3
+          },
 
-          { name: "Leg Press", defaultSets: 3 },
+          {
+            name:
+              "Leg Press",
+            defaultSets: 3
+          },
 
-          { name: "Leg Curl", defaultSets: 3 },
+          {
+            name:
+              "Leg Curl",
+            defaultSets: 3
+          },
 
-          { name: "Calf Raise", defaultSets: 3 }
+          {
+            name:
+              "Calf Raise",
+            defaultSets: 3
+          }
 
         ]
+
       }
 
     ]
@@ -928,32 +2066,63 @@ const workoutSystems = {
 
   FULL_BODY: {
 
-    name: "Full Body",
+    name:
+      "Full Body",
 
     icon: "🧱",
 
-    description: "الجسم كامل في الحصة",
+    description:
+      "الجسم كامل في الحصة",
 
     days: [
 
       {
-        name: "Full Body",
-        muscles: "Full Body",
+        name:
+          "Full Body",
+
+        muscles:
+          "Full Body",
+
         exercises: [
 
-          { name: "Squat", defaultSets: 3 },
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          },
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Shoulder Press", defaultSets: 3 },
+          {
+            name:
+              "Shoulder Press",
+            defaultSets: 3
+          },
 
-          { name: "Biceps Curl", defaultSets: 2 },
+          {
+            name:
+              "Biceps Curl",
+            defaultSets: 2
+          },
 
-          { name: "Triceps Pushdown", defaultSets: 2 }
+          {
+            name:
+              "Triceps Pushdown",
+            defaultSets: 2
+          }
 
         ]
+
       }
 
     ]
@@ -963,26 +2132,45 @@ const workoutSystems = {
 
   CUSTOM: {
 
-    name: "Custom",
+    name:
+      "Custom",
 
     icon: "⚙️",
 
-    description: "نظامك الخاص",
+    description:
+      "نظامك الخاص",
 
     days: [
 
       {
-        name: "Custom Workout",
-        muscles: "اختيارك",
+        name:
+          "Custom Workout",
+
+        muscles:
+          "اختيارك",
+
         exercises: [
 
-          { name: "Bench Press", defaultSets: 3 },
+          {
+            name:
+              "Bench Press",
+            defaultSets: 3
+          },
 
-          { name: "Lat Pulldown", defaultSets: 3 },
+          {
+            name:
+              "Lat Pulldown",
+            defaultSets: 3
+          },
 
-          { name: "Squat", defaultSets: 3 }
+          {
+            name:
+              "Squat",
+            defaultSets: 3
+          }
 
         ]
+
       }
 
     ]
@@ -992,14 +2180,18 @@ const workoutSystems = {
 };
 
 
-/* ================= WORKOUT STATE ================= */
+/* =====================================================
+   WORKOUT STATE
+===================================================== */
 
 let currentSystem = null;
 
 let currentDay = null;
 
 
-/* ================= RENDER SYSTEMS ================= */
+/* =====================================================
+   RENDER SYSTEMS
+===================================================== */
 
 function renderWorkoutSystems() {
 
@@ -1008,179 +2200,258 @@ function renderWorkoutSystems() {
       "workoutSystems"
     );
 
+
   if (!container) return;
+
 
   container.innerHTML = "";
 
 
-  Object.entries(workoutSystems)
-    .forEach(([key, system]) => {
+  Object.entries(
+    workoutSystems
+  )
+    .forEach(
+      ([key, system]) => {
 
-      const card =
-        document.createElement("button");
-
-      card.className =
-        "system-card";
-
-      card.innerHTML = `
-
-        <div class="system-icon">
-          ${system.icon}
-        </div>
-
-        <h3>
-          ${system.name}
-        </h3>
-
-        <p>
-          ${system.description}
-        </p>
-
-      `;
+        const card =
+          document.createElement(
+            "button"
+          );
 
 
-      card.onclick = () =>
-        selectWorkoutSystem(key);
+        card.className =
+          "system-card";
 
 
-      container.appendChild(card);
+        card.innerHTML = `
 
-    });
+          <div class="system-icon">
+            ${system.icon}
+          </div>
+
+          <h3>
+            ${system.name}
+          </h3>
+
+          <p>
+            ${system.description}
+          </p>
+
+        `;
+
+
+        card.onclick = () =>
+          selectWorkoutSystem(
+            key
+          );
+
+
+        container.appendChild(
+          card
+        );
+
+      }
+    );
 
 }
 
 
-/* ================= SELECT SYSTEM ================= */
+/* =====================================================
+   SELECT SYSTEM
+===================================================== */
 
-function selectWorkoutSystem(key) {
+function selectWorkoutSystem(
+  key
+) {
 
   currentSystem = key;
+
 
   const system =
     workoutSystems[key];
 
-  document
-    .getElementById("workoutSystems")
-    .classList.add("hidden");
-
 
   document
-    .getElementById("workoutDaysSection")
-    .classList.remove("hidden");
+    .getElementById(
+      "workoutSystems"
+    )
+    .classList.add(
+      "hidden"
+    );
 
 
   document
-    .getElementById("selectedSystemTitle")
+    .getElementById(
+      "workoutDaysSection"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "selectedSystemTitle"
+    )
     .textContent =
       system.name;
 
 
-  renderWorkoutDays(system);
+  renderWorkoutDays(
+    system
+  );
 
 }
 
 
-/* ================= DAYS ================= */
+/* =====================================================
+   DAYS
+===================================================== */
 
-function renderWorkoutDays(system) {
+function renderWorkoutDays(
+  system
+) {
 
   const container =
     document.getElementById(
       "workoutDays"
     );
 
-  container.innerHTML = "";
+
+  container.innerHTML =
+    "";
 
 
-  system.days.forEach((day, index) => {
+  system.days.forEach(
+    (day, index) => {
 
-    const card =
-      document.createElement("button");
-
-    card.className =
-      "day-card";
-
-    card.innerHTML = `
-
-      <h3>
-        ${day.name}
-      </h3>
-
-      <p>
-        ${day.muscles}
-      </p>
-
-    `;
+      const card =
+        document.createElement(
+          "button"
+        );
 
 
-    card.onclick = () =>
-      selectWorkoutDay(index);
+      card.className =
+        "day-card";
 
 
-    container.appendChild(card);
+      card.innerHTML = `
 
-  });
+        <h3>
+          ${day.name}
+        </h3>
+
+        <p>
+          ${day.muscles}
+        </p>
+
+      `;
+
+
+      card.onclick = () =>
+        selectWorkoutDay(
+          index
+        );
+
+
+      container.appendChild(
+        card
+      );
+
+    }
+  );
 
 }
 
 
-/* ================= SELECT DAY ================= */
+/* =====================================================
+   SELECT DAY
+===================================================== */
 
-function selectWorkoutDay(index) {
+function selectWorkoutDay(
+  index
+) {
 
   currentDay = index;
 
+
   const system =
-    workoutSystems[currentSystem];
+    workoutSystems[
+      currentSystem
+    ];
+
 
   const day =
     system.days[index];
 
 
   document
-    .getElementById("workoutDaysSection")
-    .classList.add("hidden");
+    .getElementById(
+      "workoutDaysSection"
+    )
+    .classList.add(
+      "hidden"
+    );
 
 
   document
-    .getElementById("exerciseSection")
-    .classList.remove("hidden");
+    .getElementById(
+      "exerciseSection"
+    )
+    .classList.remove(
+      "hidden"
+    );
 
 
   document
-    .getElementById("selectedDayTitle")
+    .getElementById(
+      "selectedDayTitle"
+    )
     .textContent =
       day.name;
 
 
   document
-    .getElementById("selectedDaySubtitle")
+    .getElementById(
+      "selectedDaySubtitle"
+    )
     .textContent =
       day.muscles;
 
 
-  renderExercises(day);
+  renderExercises(
+    day
+  );
 
 }
 
 
-/* ================= EXERCISES ================= */
+/* =====================================================
+   EXERCISES
+===================================================== */
 
-function renderExercises(day) {
+function renderExercises(
+  day
+) {
 
   const container =
     document.getElementById(
       "exerciseList"
     );
 
-  container.innerHTML = "";
+
+  container.innerHTML =
+    "";
 
 
   day.exercises.forEach(
     (exercise, exerciseIndex) => {
 
       const card =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       card.className =
         "exercise-card";
@@ -1190,7 +2461,8 @@ function renderExercises(day) {
         exerciseIndex;
 
 
-      let setsHTML = "";
+      let setsHTML =
+        "";
 
 
       for (
@@ -1199,7 +2471,8 @@ function renderExercises(day) {
         i++
       ) {
 
-        setsHTML += createSetHTML(i);
+        setsHTML +=
+          createSetHTML(i);
 
       }
 
@@ -1238,7 +2511,9 @@ function renderExercises(day) {
       `;
 
 
-      container.appendChild(card);
+      container.appendChild(
+        card
+      );
 
     }
   );
@@ -1246,9 +2521,13 @@ function renderExercises(day) {
 }
 
 
-/* ================= SET HTML ================= */
+/* =====================================================
+   SET HTML
+===================================================== */
 
-function createSetHTML(number) {
+function createSetHTML(
+  number
+) {
 
   return `
 
@@ -1285,9 +2564,13 @@ function createSetHTML(number) {
 }
 
 
-/* ================= TOGGLE SET ================= */
+/* =====================================================
+   TOGGLE SET
+===================================================== */
 
-function toggleSet(button) {
+function toggleSet(
+  button
+) {
 
   button.classList.toggle(
     "completed"
@@ -1296,12 +2579,19 @@ function toggleSet(button) {
 }
 
 
-/* ================= ADD SET ================= */
+/* =====================================================
+   ADD SET
+===================================================== */
 
-function addSet(button) {
+function addSet(
+  button
+) {
 
   const exerciseCard =
-    button.closest(".exercise-card");
+    button.closest(
+      ".exercise-card"
+    );
+
 
   const container =
     exerciseCard.querySelector(
@@ -1317,27 +2607,46 @@ function addSet(button) {
 
   container.insertAdjacentHTML(
     "beforeend",
-    createSetHTML(setCount)
+    createSetHTML(
+      setCount
+    )
   );
 
 }
 
 
-/* ================= BACK ================= */
+/* =====================================================
+   BACK
+===================================================== */
 
 function backToSystems() {
 
   document
-    .getElementById("workoutDaysSection")
-    .classList.add("hidden");
+    .getElementById(
+      "workoutDaysSection"
+    )
+    .classList.add(
+      "hidden"
+    );
+
 
   document
-    .getElementById("exerciseSection")
-    .classList.add("hidden");
+    .getElementById(
+      "exerciseSection"
+    )
+    .classList.add(
+      "hidden"
+    );
+
 
   document
-    .getElementById("workoutSystems")
-    .classList.remove("hidden");
+    .getElementById(
+      "workoutSystems"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
 
   currentSystem = null;
 
@@ -1349,12 +2658,21 @@ function backToSystems() {
 function backToDays() {
 
   document
-    .getElementById("exerciseSection")
-    .classList.add("hidden");
+    .getElementById(
+      "exerciseSection"
+    )
+    .classList.add(
+      "hidden"
+    );
+
 
   document
-    .getElementById("workoutDaysSection")
-    .classList.remove("hidden");
+    .getElementById(
+      "workoutDaysSection"
+    )
+    .classList.remove(
+      "hidden"
+    );
 
 }
 
@@ -1364,7 +2682,9 @@ function backToDays() {
 ===================================================== */
 
 document
-  .getElementById("finishWorkoutBtn")
+  .getElementById(
+    "finishWorkoutBtn"
+  )
   .addEventListener(
     "click",
     finishWorkout
@@ -1384,10 +2704,15 @@ function finishWorkout() {
 
 
   const system =
-    workoutSystems[currentSystem];
+    workoutSystems[
+      currentSystem
+    ];
+
 
   const day =
-    system.days[currentDay];
+    system.days[
+      currentDay
+    ];
 
 
   const exerciseCards =
@@ -1399,74 +2724,92 @@ function finishWorkout() {
   const exercises = [];
 
 
-  exerciseCards.forEach(card => {
+  exerciseCards.forEach(
+    card => {
 
-    const exerciseName =
-      card.querySelector("h3")
-        .textContent;
-
-
-    const sets = [];
-
-
-    card
-      .querySelectorAll(".set-row")
-      .forEach(row => {
-
-        const weight =
-          Number(
-            row.querySelector(
-              ".weight-input"
-            ).value
-          ) || 0;
+      const exerciseName =
+        card
+          .querySelector(
+            "h3"
+          )
+          .textContent;
 
 
-        const reps =
-          Number(
-            row.querySelector(
-              ".reps-input"
-            ).value
-          ) || 0;
+      const sets = [];
 
 
-        const completed =
-          row
-            .querySelector(
-              ".set-complete"
-            )
-            .classList
-            .contains("completed");
+      card
+        .querySelectorAll(
+          ".set-row"
+        )
+        .forEach(
+          row => {
+
+            const weight =
+              Number(
+                row
+                  .querySelector(
+                    ".weight-input"
+                  )
+                  .value
+              ) || 0;
 
 
-        sets.push({
+            const reps =
+              Number(
+                row
+                  .querySelector(
+                    ".reps-input"
+                  )
+                  .value
+              ) || 0;
 
-          weight,
 
-          reps,
+            const completed =
+              row
+                .querySelector(
+                  ".set-complete"
+                )
+                .classList
+                .contains(
+                  "completed"
+                );
 
-          completed
 
-        });
+            sets.push({
+
+              weight,
+
+              reps,
+
+              completed
+
+            });
+
+          }
+        );
+
+
+      exercises.push({
+
+        name:
+          exerciseName,
+
+        sets
 
       });
 
-
-    exercises.push({
-
-      name: exerciseName,
-
-      sets
-
-    });
-
-  });
+    }
+  );
 
 
   const workout = {
 
-    id: Date.now(),
+    id:
+      Date.now(),
 
-    date: getToday(),
+    date:
+      getToday(),
 
     system:
       system.name,
@@ -1485,14 +2828,40 @@ function finishWorkout() {
 
 
   /*
-     مؤقتًا هنضيف XP بسيط.
-     هنطور نظام الـXP الحقيقي بعدين.
+     Workout analysis
+  */
+
+  const workoutStats =
+    calculateWorkoutStats(
+      exercises
+    );
+
+
+  /*
+     XP
+
+     ما زلنا محافظين على
+     +100 XP للحصة حاليًا.
   */
 
   appData.xp += 100;
 
 
+  /*
+     Update streak BEFORE
+     calculating consistency.
+  */
+
   updateStreak();
+
+
+  /*
+     Character progression.
+  */
+
+  applyWorkoutStats(
+    workoutStats
+  );
 
 
   saveData();
@@ -1501,38 +2870,85 @@ function finishWorkout() {
   updateHome();
 
 
-  alert(
-    "🔥 تمرين ممتاز! تم حفظ التمرين +100 XP"
-  );
+  if (
+    workoutStats.completedSets > 0
+  ) {
+
+    alert(
+      `🔥 تمرين ممتاز!\n\n` +
+      `+100 XP\n` +
+      `STR +${Math.min(
+        4,
+        Math.floor(
+          workoutStats.heavySets / 2
+        ) + 1
+      )}\n` +
+      `END +${Math.max(
+        1,
+        Math.min(
+          4,
+          Math.floor(
+            workoutStats.completedSets / 5
+          ) + 1
+        )
+      )}\n` +
+      `POW +${Math.max(
+        1,
+        Math.min(
+          4,
+          Math.floor(
+            workoutStats.totalVolume / 1000
+          ) + 1
+        )
+      )}`
+    );
+
+  } else {
+
+    alert(
+      "تم حفظ التمرين +100 XP 🔥"
+    );
+
+  }
 
 
   backToSystems();
 
-  showPage("homePage");
+  showPage(
+    "homePage"
+  );
 
 }
 
 
-/* ================= STREAK ================= */
+/* =====================================================
+   STREAK
+===================================================== */
 
 function updateStreak() {
 
   const today =
     getToday();
 
+
   const last =
-    appData.streak.lastWorkoutDate;
+    appData.streak
+      .lastWorkoutDate;
 
 
   if (!last) {
 
-    appData.streak.current = 1;
+    appData.streak.current =
+      1;
 
-    appData.streak.longest = 1;
+    appData.streak.longest =
+      1;
 
   }
 
-  else if (last === today) {
+  else if (
+    last === today
+  ) {
 
     return;
 
@@ -1547,7 +2963,9 @@ function updateStreak() {
       );
 
 
-    if (difference === 1) {
+    if (
+      difference === 1
+    ) {
 
       appData.streak.current++;
 
@@ -1555,7 +2973,8 @@ function updateStreak() {
 
     else {
 
-      appData.streak.current = 1;
+      appData.streak.current =
+        1;
 
     }
 
@@ -1579,12 +2998,15 @@ function updateStreak() {
 }
 
 
-/* ================= HELPERS ================= */
+/* =====================================================
+   HELPERS
+===================================================== */
 
 function getToday() {
 
   const date =
     new Date();
+
 
   return date
     .toISOString()
@@ -1599,10 +3021,15 @@ function dateDifference(
 ) {
 
   const first =
-    new Date(firstDate);
+    new Date(
+      firstDate
+    );
+
 
   const second =
-    new Date(secondDate);
+    new Date(
+      secondDate
+    );
 
 
   const difference =
@@ -1611,7 +3038,12 @@ function dateDifference(
 
   return Math.round(
     difference /
-    (1000 * 60 * 60 * 24)
+    (
+      1000 *
+      60 *
+      60 *
+      24
+    )
   );
 
 }
