@@ -11,10 +11,15 @@
 <body>
 
   <!-- ================= ONBOARDING ================= -->
+
   <section id="onboarding" class="screen hidden">
+
     <div class="onboarding-card">
+
       <div class="logo">MO GYM PRO</div>
+
       <h1>ابدأ رحلتك 💪</h1>
+
       <p>خلينا نجهز برنامجك الرياضي</p>
 
       <form id="onboardingForm">
@@ -26,7 +31,9 @@
         <input id="ageInput" type="number" min="10" max="100" required>
 
         <label>النوع</label>
+
         <div class="gender-options">
+
           <label class="choice">
             <input type="radio" name="gender" value="male" required>
             <span>ذكر</span>
@@ -36,6 +43,7 @@
             <input type="radio" name="gender" value="female">
             <span>أنثى</span>
           </label>
+
         </div>
 
         <label>الطول (سم)</label>
@@ -45,6 +53,7 @@
         <input id="weightInput" type="number" step="0.1" required>
 
         <label>الهدف</label>
+
         <select id="goalInput" required>
           <option value="gain">زيادة الوزن والعضلات</option>
           <option value="maintain">المحافظة على الوزن</option>
@@ -52,6 +61,7 @@
         </select>
 
         <label>مستوى النشاط</label>
+
         <select id="activityInput" required>
           <option value="low">منخفض</option>
           <option value="light">خفيف</option>
@@ -67,17 +77,22 @@
         </button>
 
       </form>
+
     </div>
+
   </section>
 
 
   <!-- ================= APP ================= -->
+
   <main id="app" class="hidden">
 
-    <!-- HOME -->
+    <!-- ================= HOME ================= -->
+
     <section id="homePage" class="page active">
 
       <header class="top-bar">
+
         <div>
           <div class="logo-small">MO GYM PRO</div>
           <h2 id="homeGreeting">أهلاً 👋</h2>
@@ -87,28 +102,266 @@
           <button onclick="showPage('profilePage')">👤</button>
           <button onclick="showPage('morePage')">⚙️</button>
         </div>
+
       </header>
 
-      <div class="avatar-card">
-        <div id="avatar" class="avatar">
-          <div class="avatar-head"></div>
-          <div class="avatar-body"></div>
-          <div class="avatar-arms"></div>
-          <div class="avatar-legs"></div>
-        </div>
 
-        <div class="level-info">
-          <h3>Level <span id="levelValue">1</span></h3>
+      <!-- ================= CHARACTER ================= -->
 
-          <div class="xp-bar">
-            <div id="xpProgress"></div>
+      <div class="hero-progress-card">
+
+        <!-- AVATAR -->
+
+        <div class="avatar-stage">
+
+          <div class="avatar-glow"></div>
+
+          <div id="avatar" class="gym-avatar">
+
+            <div class="avatar-head">
+              <div class="avatar-hair"></div>
+
+              <div class="avatar-face">
+                <span></span>
+                <span></span>
+              </div>
+
+            </div>
+
+            <div class="avatar-neck"></div>
+
+            <div class="avatar-torso">
+
+              <div class="avatar-chest"></div>
+
+              <div class="avatar-abs">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+            </div>
+
+
+            <div class="avatar-arm left">
+              <div class="avatar-bicep"></div>
+              <div class="avatar-forearm"></div>
+              <div class="avatar-hand"></div>
+            </div>
+
+            <div class="avatar-arm right">
+              <div class="avatar-bicep"></div>
+              <div class="avatar-forearm"></div>
+              <div class="avatar-hand"></div>
+            </div>
+
+
+            <div class="avatar-legs">
+
+              <div class="avatar-leg left"></div>
+              <div class="avatar-leg right"></div>
+
+            </div>
+
           </div>
 
-          <small>
-            <span id="xpValue">0</span> XP
-          </small>
+
+          <div class="avatar-level-badge">
+
+            <small>LEVEL</small>
+
+            <strong id="levelValue">1</strong>
+
+          </div>
+
         </div>
+
+
+        <!-- LEVEL -->
+
+        <div class="level-panel">
+
+          <div class="level-header">
+
+            <div>
+              <span class="eyebrow">YOUR PROGRESS</span>
+
+              <h3>
+                Level
+                <span id="levelTitleValue">1</span>
+              </h3>
+            </div>
+
+            <div class="xp-number">
+
+              <strong id="xpValue">0</strong>
+
+              <small>
+                /
+                <span id="xpNextValue">100</span>
+                XP
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div class="xp-bar large">
+
+            <div id="xpProgress"></div>
+
+          </div>
+
+
+          <div class="xp-labels">
+
+            <span>Current Level</span>
+
+            <span>
+              <b id="xpRemainingValue">100</b>
+              XP to next level
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- CHARACTER STATS -->
+
+        <div class="character-stats">
+
+          <div class="stats-heading">
+
+            <div>
+              <span class="eyebrow">CHARACTER STATS</span>
+              <h3>قدراتك</h3>
+            </div>
+
+            <span class="stats-level">
+              LVL
+              <b id="statsLevelValue">1</b>
+            </span>
+
+          </div>
+
+
+          <!-- STR -->
+
+          <div class="character-stat">
+
+            <div class="stat-top">
+
+              <span class="stat-name">
+                <b>STR</b>
+                <small>Strength</small>
+              </span>
+
+              <strong id="strValue">1</strong>
+
+            </div>
+
+            <div class="stat-bar">
+              <div id="strProgress"></div>
+            </div>
+
+          </div>
+
+
+          <!-- END -->
+
+          <div class="character-stat">
+
+            <div class="stat-top">
+
+              <span class="stat-name">
+                <b>END</b>
+                <small>Endurance</small>
+              </span>
+
+              <strong id="endValue">1</strong>
+
+            </div>
+
+            <div class="stat-bar">
+              <div id="endProgress"></div>
+            </div>
+
+          </div>
+
+
+          <!-- POW -->
+
+          <div class="character-stat">
+
+            <div class="stat-top">
+
+              <span class="stat-name">
+                <b>POW</b>
+                <small>Power</small>
+              </span>
+
+              <strong id="powValue">1</strong>
+
+            </div>
+
+            <div class="stat-bar">
+              <div id="powProgress"></div>
+            </div>
+
+          </div>
+
+
+          <!-- REC -->
+
+          <div class="character-stat">
+
+            <div class="stat-top">
+
+              <span class="stat-name">
+                <b>REC</b>
+                <small>Recovery</small>
+              </span>
+
+              <strong id="recValue">1</strong>
+
+            </div>
+
+            <div class="stat-bar">
+              <div id="recProgress"></div>
+            </div>
+
+          </div>
+
+
+          <!-- CON -->
+
+          <div class="character-stat">
+
+            <div class="stat-top">
+
+              <span class="stat-name">
+                <b>CON</b>
+                <small>Consistency</small>
+              </span>
+
+              <strong id="conValue">1</strong>
+
+            </div>
+
+            <div class="stat-bar">
+              <div id="conProgress"></div>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
+
+
+      <!-- BASIC STATS -->
 
       <div class="stats-grid">
 
@@ -138,53 +391,91 @@
 
       </div>
 
+
+      <!-- PROGRESS -->
+
       <div class="card progress-card">
+
         <div class="section-title">
+
           <h3>التقدم</h3>
-          <button onclick="showPage('progressPage')">عرض الكل</button>
+
+          <button onclick="showPage('progressPage')">
+            عرض الكل
+          </button>
+
         </div>
 
         <p id="progressMessage">
           ابدأ أول تمرين ليظهر تقدمك هنا 💪
         </p>
+
       </div>
 
     </section>
 
 
-    <!-- WORKOUT -->
+    <!-- ================= WORKOUT ================= -->
+
     <section id="workoutPage" class="page">
 
       <header class="page-header">
+
         <h2>🏋️ Workout</h2>
-        <p>اختار نظام تمرينك وابدأ</p>
+
+        <p>
+          اختار نظام تمرينك وابدأ
+        </p>
+
       </header>
+
 
       <div id="workoutSystems" class="systems-grid"></div>
 
+
       <div id="workoutDaysSection" class="hidden">
+
         <div class="section-title">
+
           <h3 id="selectedSystemTitle"></h3>
-          <button onclick="backToSystems()">تغيير النظام</button>
+
+          <button onclick="backToSystems()">
+            تغيير النظام
+          </button>
+
         </div>
 
         <div id="workoutDays" class="days-grid"></div>
+
       </div>
+
 
       <div id="exerciseSection" class="hidden">
 
         <div class="section-title">
+
           <div>
+
             <h3 id="selectedDayTitle"></h3>
+
             <small id="selectedDaySubtitle"></small>
+
           </div>
 
-          <button onclick="backToDays()">رجوع</button>
+          <button onclick="backToDays()">
+            رجوع
+          </button>
+
         </div>
+
 
         <div id="exerciseList"></div>
 
-        <button id="finishWorkoutBtn" class="primary-btn">
+
+        <button
+          id="finishWorkoutBtn"
+          class="primary-btn"
+        >
           إنهاء التمرين 🔥
         </button>
 
@@ -193,20 +484,23 @@
     </section>
 
 
-    <!-- PROFILE -->
+    <!-- ================= PROFILE ================= -->
+
     <section id="profilePage" class="page">
 
       <header class="page-header">
         <h2>👤 Profile</h2>
       </header>
 
+
       <div class="profile-card card">
 
         <div id="profileAvatar" class="profile-avatar">
-          👤
+          💪
         </div>
 
         <h2 id="profileName"></h2>
+
 
         <div class="profile-info-grid">
 
@@ -232,16 +526,28 @@
 
         </div>
 
+
         <div class="profile-goal">
+
           <small>الهدف</small>
+
           <strong id="profileGoal"></strong>
+
         </div>
 
-        <button class="secondary-btn" onclick="openWeightUpdate()">
+
+        <button
+          class="secondary-btn"
+          onclick="openWeightUpdate()"
+        >
           تحديث الوزن ⚖️
         </button>
 
-        <button class="secondary-btn" onclick="showPage('weightPage')">
+
+        <button
+          class="secondary-btn"
+          onclick="showPage('weightPage')"
+        >
           سجل الأوزان 📊
         </button>
 
@@ -250,99 +556,170 @@
     </section>
 
 
-    <!-- WEIGHT HISTORY -->
+    <!-- ================= WEIGHT HISTORY ================= -->
+
     <section id="weightPage" class="page">
 
       <header class="page-header">
+
         <h2>⚖️ سجل الوزن</h2>
-        <p>تابع تطور وزنك مع الوقت</p>
+
+        <p>
+          تابع تطور وزنك مع الوقت
+        </p>
+
       </header>
 
+
       <div class="card">
+
         <div id="weightHistoryList"></div>
+
       </div>
 
     </section>
 
 
-    <!-- MORE -->
+    <!-- ================= MORE ================= -->
+
     <section id="morePage" class="page">
 
       <header class="page-header">
         <h2>⋯ المزيد</h2>
       </header>
 
+
       <div class="more-grid">
 
-        <button onclick="showPage('calculatorPage')">🧮<span>Calculator</span></button>
-        <button onclick="showPage('journalPage')">📓<span>Journal</span></button>
-        <button onclick="showPage('progressPage')">📈<span>Progress</span></button>
-        <button onclick="showPage('achievementsPage')">🏆<span>Achievements</span></button>
-        <button onclick="showPage('recordsPage')">🥇<span>Personal Records</span></button>
-        <button onclick="showPage('settingsPage')">⚙️<span>Settings</span></button>
+        <button onclick="showPage('calculatorPage')">
+          🧮
+          <span>Calculator</span>
+        </button>
+
+        <button onclick="showPage('journalPage')">
+          📓
+          <span>Journal</span>
+        </button>
+
+        <button onclick="showPage('progressPage')">
+          📈
+          <span>Progress</span>
+        </button>
+
+        <button onclick="showPage('achievementsPage')">
+          🏆
+          <span>Achievements</span>
+        </button>
+
+        <button onclick="showPage('recordsPage')">
+          🥇
+          <span>Personal Records</span>
+        </button>
+
+        <button onclick="showPage('settingsPage')">
+          ⚙️
+          <span>Settings</span>
+        </button>
 
       </div>
 
     </section>
 
 
-    <!-- PLACEHOLDER PAGES -->
+    <!-- ================= PLACEHOLDER PAGES ================= -->
+
     <section id="calculatorPage" class="page">
+
       <header class="page-header">
         <h2>🧮 Calculator</h2>
       </header>
+
       <div class="card">
-        <p>قسم الحاسبة هيتبني في المرحلة القادمة.</p>
+        <p>
+          قسم الحاسبة هيتبني في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
+
     <section id="journalPage" class="page">
+
       <header class="page-header">
         <h2>📓 Journal</h2>
       </header>
+
       <div class="card">
-        <p>قسم اليوميات هيتبني في المرحلة القادمة.</p>
+        <p>
+          قسم اليوميات هيتبني في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
+
     <section id="progressPage" class="page">
+
       <header class="page-header">
         <h2>📈 Progress</h2>
       </header>
+
       <div class="card">
-        <p>قسم التقدم هيتبني في المرحلة القادمة.</p>
+        <p>
+          قسم التقدم هيتبني في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
+
     <section id="achievementsPage" class="page">
+
       <header class="page-header">
         <h2>🏆 Achievements</h2>
       </header>
+
       <div class="card">
-        <p>قسم الإنجازات هيتبني في المرحلة القادمة.</p>
+        <p>
+          قسم الإنجازات هيتبني في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
+
     <section id="recordsPage" class="page">
+
       <header class="page-header">
         <h2>🥇 Personal Records</h2>
       </header>
+
       <div class="card">
-        <p>قسم الـ PRs هيتبني في المرحلة القادمة.</p>
+        <p>
+          قسم الـ PRs هيتبني في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
+
     <section id="settingsPage" class="page">
+
       <header class="page-header">
         <h2>⚙️ Settings</h2>
       </header>
+
       <div class="card">
-        <p>الإعدادات هتتوسع في المرحلة القادمة.</p>
+        <p>
+          الإعدادات هتتوسع في المرحلة القادمة.
+        </p>
       </div>
+
     </section>
 
 
-    <!-- BOTTOM NAV -->
+    <!-- ================= BOTTOM NAV ================= -->
+
     <nav class="bottom-nav">
 
       <button onclick="showPage('homePage')">
@@ -370,7 +747,8 @@
   </main>
 
 
-  <!-- WEIGHT MODAL -->
+  <!-- ================= WEIGHT MODAL ================= -->
+
   <div id="weightModal" class="modal hidden">
 
     <div class="modal-box">
@@ -385,13 +763,21 @@
       >
 
       <div class="modal-actions">
-        <button class="secondary-btn" onclick="closeWeightUpdate()">
+
+        <button
+          class="secondary-btn"
+          onclick="closeWeightUpdate()"
+        >
           إلغاء
         </button>
 
-        <button class="primary-btn" onclick="saveWeightUpdate()">
+        <button
+          class="primary-btn"
+          onclick="saveWeightUpdate()"
+        >
           حفظ
         </button>
+
       </div>
 
     </div>
