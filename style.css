@@ -14,6 +14,15 @@
   --border: #e5e7eb;
   --nav: #ffffff;
   --danger: #dc2626;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --purple: #7c3aed;
+
+  --avatar-skin: #c98b62;
+  --avatar-skin-dark: #a96746;
+  --avatar-shorts: #111827;
+  --avatar-shoes: #111827;
 }
 
 body.dark {
@@ -23,6 +32,9 @@ body.dark {
   --muted: #94a3b8;
   --border: #334155;
   --nav: #1e293b;
+
+  --avatar-shorts: #020617;
+  --avatar-shoes: #020617;
 }
 
 body {
@@ -48,7 +60,9 @@ button {
 }
 
 
-/* ================= ONBOARDING ================= */
+/* =====================================================
+   ONBOARDING
+===================================================== */
 
 #onboarding {
   min-height: 100vh;
@@ -138,7 +152,9 @@ select:focus {
 }
 
 
-/* ================= APP ================= */
+/* =====================================================
+   APP
+===================================================== */
 
 #app {
   min-height: 100vh;
@@ -197,14 +213,16 @@ select:focus {
 }
 
 
-/* ================= CARDS ================= */
+/* =====================================================
+   CARDS
+===================================================== */
 
 .card,
 .stat-card,
-.avatar-card,
 .system-card,
 .day-card,
-.exercise-card {
+.exercise-card,
+.hero-progress-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -215,120 +233,696 @@ select:focus {
 }
 
 
-/* ================= AVATAR ================= */
+/* =====================================================
+   HERO / CHARACTER
+===================================================== */
 
-.avatar-card {
+.hero-progress-card {
   padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 25px;
   margin-bottom: 18px;
+  overflow: hidden;
 }
 
-.avatar {
-  width: 120px;
-  height: 180px;
+.avatar-stage {
   position: relative;
-  margin: auto;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(37,99,235,.18),
+      transparent 48%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(37,99,235,.06),
+      transparent
+    );
 }
+
+.avatar-stage::after {
+  content: "";
+  position: absolute;
+  bottom: 20px;
+  width: 170px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.12);
+  filter: blur(7px);
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+.gym-avatar {
+  --avatar-scale: 1;
+  --muscle: 1;
+
+  --torso-width: calc(84px * var(--muscle));
+  --chest-width: calc(100px * var(--muscle));
+
+  --arm-width: calc(17px * var(--muscle));
+  --leg-width: calc(24px * var(--muscle));
+
+  position: relative;
+
+  width: 190px;
+  height: 260px;
+
+  transform:
+    scale(var(--avatar-scale));
+
+  transform-origin:
+    bottom center;
+
+  transition:
+    transform .6s ease,
+    --muscle .6s ease;
+}
+
+
+/* HEAD */
 
 .avatar-head {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #d4a373;
   position: absolute;
-  top: 0;
-  left: 39px;
-}
 
-.avatar-body {
-  width: 58px;
-  height: 78px;
-  border-radius: 25px 25px 15px 15px;
-  background: var(--primary);
-  position: absolute;
-  top: 48px;
-  left: 31px;
-}
-
-.avatar-arms::before,
-.avatar-arms::after {
-  content: "";
-  position: absolute;
-  width: 18px;
+  width: 62px;
   height: 70px;
-  background: #d4a373;
-  border-radius: 15px;
-  top: 52px;
+
+  top: 4px;
+  left: 64px;
+
+  border-radius:
+    45% 45% 48% 48%;
+
+  background: var(--avatar-skin);
+
+  z-index: 5;
+
+  box-shadow:
+    inset -5px -5px 0 rgba(0,0,0,.08);
 }
 
-.avatar-arms::before {
-  left: 13px;
-  transform: rotate(8deg);
-}
 
-.avatar-arms::after {
-  right: 13px;
-  transform: rotate(-8deg);
-}
+/* HAIR */
 
-.avatar-legs::before,
-.avatar-legs::after {
-  content: "";
+.avatar-hair {
   position: absolute;
-  width: 20px;
-  height: 65px;
-  background: #334155;
-  border-radius: 10px;
-  top: 120px;
+
+  width: 64px;
+  height: 32px;
+
+  top: -5px;
+  left: -1px;
+
+  border-radius:
+    50% 50% 35% 35%;
+
+  background: #111827;
 }
 
-.avatar-legs::before {
-  left: 35px;
+
+/* FACE */
+
+.avatar-face {
+  position: absolute;
+
+  top: 30px;
+  left: 14px;
+
+  width: 34px;
+
+  display: flex;
+  justify-content: space-between;
 }
 
-.avatar-legs::after {
-  right: 35px;
+.avatar-face span {
+  width: 5px;
+  height: 5px;
+
+  background: #111827;
+
+  border-radius: 50%;
 }
 
-.level-info {
-  flex: 1;
+
+/* NECK */
+
+.avatar-neck {
+  position: absolute;
+
+  width: 28px;
+  height: 22px;
+
+  top: 63px;
+  left: 81px;
+
+  background: var(--avatar-skin);
+
+  z-index: 2;
 }
 
-.level-info h3 {
-  margin-bottom: 10px;
+
+/* TORSO */
+
+.avatar-torso {
+  position: absolute;
+
+  width: var(--torso-width);
+  height: 105px;
+
+  top: 75px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius:
+    30px 30px 18px 18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #1d4ed8,
+      #2563eb,
+      #1d4ed8
+    );
+
+  z-index: 3;
+
+  transition:
+    width .6s ease;
+}
+
+
+/* CHEST */
+
+.avatar-chest {
+  position: absolute;
+
+  width: var(--chest-width);
+  height: 46px;
+
+  top: 4px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius:
+    45% 45% 35% 35%;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.10),
+      rgba(255,255,255,.08),
+      rgba(0,0,0,.10)
+    );
+
+  transition:
+    width .6s ease;
+}
+
+
+/* ABS */
+
+.avatar-abs {
+  position: absolute;
+
+  top: 50px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.avatar-abs span {
+  height: 8px;
+
+  border-radius: 5px;
+
+  background: rgba(0,0,0,.12);
+}
+
+
+/* ARMS */
+
+.avatar-arm {
+  position: absolute;
+
+  top: 80px;
+
+  width: 24px;
+  height: 100px;
+
+  z-index: 2;
+}
+
+.avatar-arm.left {
+  left: 27px;
+  transform: rotate(7deg);
+}
+
+.avatar-arm.right {
+  right: 27px;
+  transform: rotate(-7deg);
+}
+
+
+/* BICEP */
+
+.avatar-bicep {
+  width: var(--arm-width);
+  height: 47px;
+
+  margin: auto;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--avatar-skin-dark),
+      var(--avatar-skin)
+    );
+
+  transition:
+    width .6s ease;
+}
+
+
+/* FOREARM */
+
+.avatar-forearm {
+  width: calc(var(--arm-width) * .78);
+  height: 40px;
+
+  margin: -2px auto 0;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--avatar-skin-dark),
+      var(--avatar-skin)
+    );
+}
+
+
+/* HAND */
+
+.avatar-hand {
+  width: 18px;
+  height: 17px;
+
+  margin: -2px auto;
+
+  border-radius: 50%;
+
+  background: var(--avatar-skin);
+}
+
+
+/* LEGS */
+
+.avatar-legs {
+  position: absolute;
+
+  top: 170px;
+  left: 50%;
+
+  width: 70px;
+  height: 80px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  justify-content: space-between;
+
+  z-index: 1;
+}
+
+.avatar-leg {
+  width: var(--leg-width);
+  height: 78px;
+
+  border-radius:
+    13px 13px 10px 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--avatar-shorts),
+      #1f2937,
+      var(--avatar-shorts)
+    );
+
+  transition:
+    width .6s ease;
+}
+
+.avatar-leg::after {
+  content: "";
+
+  display: block;
+
+  width: 34px;
+  height: 15px;
+
+  margin-top: 67px;
+  margin-left: -5px;
+
+  border-radius: 12px 15px 7px 7px;
+
+  background: var(--avatar-shoes);
+}
+
+
+/* AVATAR GLOW */
+
+.avatar-glow {
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  bottom: 48px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(37,99,235,.20),
+      transparent 65%
+    );
+
+  filter: blur(10px);
+}
+
+
+/* LEVEL BADGE */
+
+.avatar-level-badge {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  min-width: 70px;
+
+  padding: 9px 12px;
+
+  text-align: center;
+
+  border-radius: 14px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  box-shadow: 0 8px 25px rgba(0,0,0,.08);
+
+  z-index: 10;
+}
+
+.avatar-level-badge small {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 9px;
+
+  letter-spacing: 1px;
+}
+
+.avatar-level-badge strong {
+  display: block;
+
+  color: var(--primary);
+
+  font-size: 22px;
+
+  margin-top: 2px;
+}
+
+
+/* =====================================================
+   LEVEL PANEL
+===================================================== */
+
+.level-panel {
+  padding: 20px 4px 5px;
+}
+
+.level-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 13px;
+}
+
+.eyebrow {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+
+  margin-bottom: 4px;
+}
+
+.level-header h3 {
+  font-size: 23px;
+}
+
+.xp-number {
+  text-align: left;
+}
+
+.xp-number strong {
+  font-size: 22px;
+
+  color: var(--primary);
+}
+
+.xp-number small {
+  color: var(--muted);
 }
 
 .xp-bar {
   width: 100%;
+
   height: 10px;
+
   background: var(--border);
+
   border-radius: 20px;
+
   overflow: hidden;
+}
+
+.xp-bar.large {
+  height: 13px;
 }
 
 #xpProgress {
   height: 100%;
+
   width: 0%;
-  background: var(--primary);
-  transition: width .3s;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      #60a5fa
+    );
+
+  border-radius: inherit;
+
+  transition: width .5s ease;
+}
+
+.xp-labels {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  font-size: 11px;
+
+  color: var(--muted);
 }
 
 
-/* ================= STATS ================= */
+/* =====================================================
+   CHARACTER STATS
+===================================================== */
+
+.character-stats {
+  margin-top: 22px;
+
+  padding: 18px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(37,99,235,.05),
+      transparent
+    );
+
+  border: 1px solid var(--border);
+}
+
+.stats-heading {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 17px;
+}
+
+.stats-heading h3 {
+  font-size: 18px;
+}
+
+.stats-level {
+  padding: 7px 10px;
+
+  border-radius: 9px;
+
+  background: var(--bg);
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+.stats-level b {
+  color: var(--primary);
+}
+
+
+/* INDIVIDUAL STAT */
+
+.character-stat {
+  margin-bottom: 14px;
+}
+
+.character-stat:last-child {
+  margin-bottom: 0;
+}
+
+.stat-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 7px;
+}
+
+.stat-name {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 8px;
+}
+
+.stat-name b {
+  min-width: 34px;
+
+  color: var(--primary);
+
+  font-size: 14px;
+}
+
+.stat-name small {
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+.stat-top > strong {
+  font-size: 13px;
+}
+
+.stat-bar {
+  height: 7px;
+
+  background: var(--border);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+}
+
+.stat-bar > div {
+  width: 0%;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      #60a5fa
+    );
+
+  transition: width .5s ease;
+}
+
+
+/* =====================================================
+   BASIC STATS
+===================================================== */
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 12px;
+
   margin-bottom: 18px;
 }
 
 .stat-card {
   padding: 18px;
+
   display: flex;
+
   flex-direction: column;
+
   gap: 7px;
 }
 
@@ -346,28 +940,38 @@ select:focus {
 }
 
 
-/* ================= WORKOUT SYSTEM ================= */
+/* =====================================================
+   WORKOUT SYSTEM
+===================================================== */
 
 .systems-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 12px;
+
   margin-bottom: 25px;
 }
 
 .system-card {
   padding: 18px;
+
   text-align: center;
+
   transition: .2s;
 }
 
 .system-card:hover {
   border-color: var(--primary);
+
   transform: translateY(-2px);
 }
 
 .system-card .system-icon {
   font-size: 32px;
+
   margin-bottom: 10px;
 }
 
@@ -377,21 +981,29 @@ select:focus {
 
 .system-card p {
   color: var(--muted);
+
   font-size: 13px;
 }
 
 
-/* ================= DAYS ================= */
+/* =====================================================
+   DAYS
+===================================================== */
 
 .days-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 12px;
+
   margin: 18px 0 25px;
 }
 
 .day-card {
   padding: 18px;
+
   text-align: center;
 }
 
@@ -401,16 +1013,22 @@ select:focus {
 
 .day-card p {
   color: var(--muted);
+
   font-size: 13px;
 }
 
 
-/* ================= EXERCISES ================= */
+/* =====================================================
+   EXERCISES
+===================================================== */
 
 #exerciseList {
   display: flex;
+
   flex-direction: column;
+
   gap: 15px;
+
   margin: 20px 0;
 }
 
@@ -420,8 +1038,11 @@ select:focus {
 
 .exercise-header {
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   margin-bottom: 15px;
 }
 
@@ -431,14 +1052,20 @@ select:focus {
 
 .set-row {
   display: grid;
-  grid-template-columns: 35px 1fr 1fr 45px;
+
+  grid-template-columns:
+    35px 1fr 1fr 45px;
+
   gap: 8px;
+
   align-items: center;
+
   margin-bottom: 8px;
 }
 
 .set-number {
   text-align: center;
+
   font-weight: bold;
 }
 
@@ -449,35 +1076,52 @@ select:focus {
 .set-complete {
   width: 40px;
   height: 40px;
+
   border-radius: 10px;
+
   background: var(--bg);
+
   color: var(--muted);
 }
 
 .set-complete.completed {
   background: #16a34a;
+
   color: white;
 }
 
 .add-set-btn {
   width: 100%;
+
   padding: 10px;
+
   margin-top: 5px;
+
   border-radius: 10px;
+
   background: var(--bg);
+
   color: var(--primary);
 }
 
 
-/* ================= BUTTONS ================= */
+/* =====================================================
+   BUTTONS
+===================================================== */
 
 .primary-btn {
   width: 100%;
+
   padding: 14px;
+
   border-radius: 13px;
+
   background: var(--primary);
+
   color: white;
+
   font-weight: bold;
+
   margin-top: 15px;
 }
 
@@ -487,24 +1131,35 @@ select:focus {
 
 .secondary-btn {
   width: 100%;
+
   padding: 13px;
+
   border-radius: 13px;
+
   background: var(--bg);
+
   color: var(--text);
+
   border: 1px solid var(--border);
+
   margin-top: 10px;
 }
 
 .section-title button,
 .page-header button {
   background: var(--bg);
+
   color: var(--primary);
+
   padding: 9px 12px;
+
   border-radius: 10px;
 }
 
 
-/* ================= PROFILE ================= */
+/* =====================================================
+   PROFILE
+===================================================== */
 
 .profile-card {
   text-align: center;
@@ -513,59 +1168,89 @@ select:focus {
 .profile-avatar {
   width: 80px;
   height: 80px;
+
   margin: 0 auto 15px;
+
   border-radius: 50%;
+
   background: var(--bg);
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   font-size: 40px;
 }
 
 .profile-info-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 12px;
+
   margin: 20px 0;
 }
 
 .profile-info-grid > div {
   background: var(--bg);
+
   padding: 15px;
+
   border-radius: 12px;
 }
 
 .profile-info-grid strong,
 .profile-goal strong {
   display: block;
+
   margin-top: 5px;
 }
 
 .profile-goal {
   padding: 15px;
+
   background: var(--bg);
+
   border-radius: 12px;
 }
 
 
-/* ================= MORE ================= */
+/* =====================================================
+   MORE
+===================================================== */
 
 .more-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 12px;
 }
 
 .more-grid button {
   background: var(--card);
+
   color: var(--text);
+
   border: 1px solid var(--border);
+
   border-radius: 18px;
+
   padding: 25px 10px;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
   gap: 10px;
+
   font-size: 28px;
 }
 
@@ -574,28 +1259,46 @@ select:focus {
 }
 
 
-/* ================= BOTTOM NAV ================= */
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
 
 .bottom-nav {
   position: fixed;
+
   bottom: 0;
+
   left: 0;
+
   right: 0;
+
   height: 70px;
+
   background: var(--nav);
+
   border-top: 1px solid var(--border);
+
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
   z-index: 100;
 }
 
 .bottom-nav button {
   background: transparent;
+
   color: var(--muted);
+
   display: flex;
+
   flex-direction: column;
+
   justify-content: center;
+
   align-items: center;
+
   gap: 3px;
 }
 
@@ -608,24 +1311,37 @@ select:focus {
 }
 
 
-/* ================= MODAL ================= */
+/* =====================================================
+   MODAL
+===================================================== */
 
 .modal {
   position: fixed;
+
   inset: 0;
+
   background: rgba(0,0,0,.55);
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   padding: 20px;
+
   z-index: 200;
 }
 
 .modal-box {
   width: 100%;
+
   max-width: 400px;
+
   background: var(--card);
+
   padding: 25px;
+
   border-radius: 20px;
 }
 
@@ -635,6 +1351,7 @@ select:focus {
 
 .modal-actions {
   display: flex;
+
   gap: 10px;
 }
 
@@ -643,13 +1360,18 @@ select:focus {
 }
 
 
-/* ================= MOBILE ================= */
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media (max-width: 600px) {
 
-  .avatar-card {
-    flex-direction: column;
-    text-align: center;
+  .hero-progress-card {
+    padding: 14px;
+  }
+
+  .avatar-stage {
+    height: 285px;
   }
 
   .systems-grid,
@@ -662,6 +1384,19 @@ select:focus {
   }
 
   .set-row {
-    grid-template-columns: 30px 1fr 1fr 42px;
+    grid-template-columns:
+      30px 1fr 1fr 42px;
+  }
+
+  .character-stats {
+    padding: 15px;
+  }
+
+  .stat-name small {
+    display: none;
+  }
+
+  .xp-labels {
+    font-size: 10px;
   }
 }
